@@ -30,7 +30,7 @@
             var p = box.object3D.position;
             new TWEEN.Tween(p)
           	.to({ x: p.x, y: 0.5, z: p.z }, 1000)
-            .easing(TWEEN.Easing.Quadratic.InOut)
+            .easing(TWEEN.Easing.Elastic.Out)
           	.onUpdate(function() {
               box.object3D.position.set(this.x, this.y, this.z);
           	})

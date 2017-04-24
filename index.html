@@ -13,31 +13,52 @@
       window.addEventListener('load', function(){
         var scene = document.querySelector('a-scene');
         var boxes = document.querySelectorAll('.box');
-        var sound = new Howl({
+        var collidables = document.querySelectorAll('.collidable');
+        var coinSound = new Howl({
           src: 'sounds/coin.mp3',
           html5: true
         });
+        var biggerSound = new Howl({
+          src: 'sounds/bigger.mp3',
+          html5: true
+        });
 
-        var touched = function(el) {
-          sound.play();
-          var p = el.object3D.position;
+        var regenerate = function() {
+          biggerSound.play();
 
-          var tween = new TWEEN.Tween(p)
-          	.to({ x: p.x, y: p.y - 0.1, z: p.z }, 200)
-            .easing(TWEEN.Easing.Quadratic.Out)
+          boxes.forEach(function(box){
+            var p = box.object3D.position;
+            new TWEEN.Tween(p)
+          	.to({ x: p.x, y: 0.5, z: p.z }, 1000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
           	.onUpdate(function() {
-              el.object3D.position.set(this.x, this.y, this.z);
+              box.object3D.position.set(this.x, this.y, this.z);
           	})
           	.start();
-          };
-        boxes.forEach(function(box){
-          box.addEventListener('raycaster-intersected', function(e){
+          });
+        }
+
+        var touched = function(box) {
+          coinSound.play();
+
+          var p = box.object3D.position;
+          new TWEEN.Tween(p)
+        	.to({ x: p.x, y: p.y - 0.2, z: p.z }, 200)
+          .easing(TWEEN.Easing.Quadratic.Out)
+        	.onUpdate(function() {
+            box.object3D.position.set(this.x, this.y, this.z);
+        	})
+        	.start();
+        };
+
+        collidables.forEach(function(collidable){
+          collidable.addEventListener('raycaster-intersected', function(e){
             var KEY = 'data-mouse';
             if (e.target.getAttribute(KEY) !== 'on') {
               e.target.setAttribute(KEY, 'on');
             }
           });
-          box.addEventListener('raycaster-intersected-cleared', function(e){
+          collidable.addEventListener('raycaster-intersected-cleared', function(e){
             var KEY = 'data-mouse';
             if (e.target.getAttribute(KEY) === 'on') {
               e.target.setAttribute(KEY, 'off');
@@ -47,9 +68,15 @@
 
         var checkClickTarget = function(){
           var KEY = 'data-mouse';
-          boxes.forEach(function(box){
-            if (box.getAttribute(KEY) === 'on') {
-              touched(box);
+          collidables.forEach(function(collidable){
+            if (collidable.getAttribute(KEY) !== 'on') {
+              return;
+            }
+            var classNames = collidable.className.split(' ');
+            if (classNames.indexOf('box') >= 0) {
+              touched(collidable);
+            } else if (classNames.indexOf('switch') >= 0) {
+              regenerate();
             }
           });
         };
@@ -67,10 +94,12 @@
 
       <a-plane width="20" height="20" color="#906030" rotation="-90 0 0" position="0 0.001 0" opacity="0.8"></a-plane>
 
-      <a-box class="collidable box" color='#ff8080' position="0 0.5 -2" id="box-a"></a-box>
-      <a-box class="collidable box" color='#80ff80' position="-2 0.5 0" id="box-b"></a-box>
-      <a-box class="collidable box" color='#8080ff' position="0 0.5 2" id="box-c"></a-box>
-      <a-box class="collidable box" color='#ff80ff' position="2 0.5 0" id="box-d"></a-box>
+      <a-box class="collidable box" color='#ff8080' position="0 0.5 -1.5" id="box-a"></a-box>
+      <a-box class="collidable box" color='#80ff80' position="-1.5 0.5 0" id="box-b"></a-box>
+      <a-box class="collidable box" color='#8080ff' position="0 0.5 1.5" id="box-c"></a-box>
+      <a-box class="collidable box" color='#ff80ff' position="1.5 0.5 0" id="box-d"></a-box>
+
+      <a-box class="collidable switch" color='#808080' position="0 0 0" scale="0.5 0.5 0.5" id="box-d"></a-box>
 
       <a-camera wasd-controls-enabled=false reverse-mouse-drag=true look-controls="enabled: true;" raycaster="objects: .collidable">
         <a-plane position="0 0 -0.5" scale="0.01 0.01 1" opacity="0.5"></a-plane>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>VR Moyashipan</title>
+    <style>
+      * {
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+      }
+    </style>
+    <script src="https://aframe.io/releases/0.5.0/aframe.js"></script>
+    <script src="./howler.js"></script>
+    <script>
+      window.addEventListener('load', function(){
+        var scene = document.querySelector('a-scene');
+        var boxes = document.querySelectorAll('.box');
+        var sound = new Howl({
+          src: 'sounds/coin.mp3',
+          html5: true
+        });
+
+        var touched = function(el) {
+          sound.play();
+          var p = el.object3D.position;
+
+          var tween = new TWEEN.Tween(p)
+          	.to({ x: p.x, y: p.y - 0.1, z: p.z }, 200)
+            .easing(TWEEN.Easing.Quadratic.Out)
+          	.onUpdate(function() {
+              el.object3D.position.set(this.x, this.y, this.z);
+          	})
+          	.start();
+          };
+        boxes.forEach(function(box){
+          box.addEventListener('raycaster-intersected', function(e){
+            var KEY = 'data-mouse';
+            if (e.target.getAttribute(KEY) !== 'on') {
+              e.target.setAttribute(KEY, 'on');
+            }
+          });
+          box.addEventListener('raycaster-intersected-cleared', function(e){
+            var KEY = 'data-mouse';
+            if (e.target.getAttribute(KEY) === 'on') {
+              e.target.setAttribute(KEY, 'off');
+            }
+          });
+        });
+
+        var checkClickTarget = function(){
+          var KEY = 'data-mouse';
+          boxes.forEach(function(box){
+            if (box.getAttribute(KEY) === 'on') {
+              touched(box);
+            }
+          });
+        };
+        var eventName = AFRAME.utils.isMobile() ? 'touchend' : 'click';
+        window.addEventListener(eventName, function(){
+          checkClickTarget();
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene vr-mode-ui="enabled: false">
+      <a-assets>
+      </a-assets>
+
+      <a-plane width="20" height="20" color="#906030" rotation="-90 0 0" position="0 0.001 0" opacity="0.8"></a-plane>
+
+      <a-box class="collidable box" color='#ff8080' position="0 0.5 -2" id="box-a"></a-box>
+      <a-box class="collidable box" color='#80ff80' position="-2 0.5 0" id="box-b"></a-box>
+      <a-box class="collidable box" color='#8080ff' position="0 0.5 2" id="box-c"></a-box>
+      <a-box class="collidable box" color='#ff80ff' position="2 0.5 0" id="box-d"></a-box>
+
+      <a-camera wasd-controls-enabled=false reverse-mouse-drag=true look-controls="enabled: true;" raycaster="objects: .collidable">
+        <a-plane position="0 0 -0.5" scale="0.01 0.01 1" opacity="0.5"></a-plane>
+      </a-camera>
+
+      <a-light type="ambient" color="#ddd"></a-light>
+      <a-light type="directional" color="#FFF" intensity="0.6" position="0 2.5 0"></a-light>
+    </a-scene>
+  </body>
+</html>

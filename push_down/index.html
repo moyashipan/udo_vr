@@ -8,18 +8,18 @@
       }
     </style>
     <script src="https://aframe.io/releases/0.5.0/aframe.js"></script>
-    <script src="./howler.js"></script>
+    <script src="../javascripts/howler.js"></script>
     <script>
       window.addEventListener('load', function(){
         var scene = document.querySelector('a-scene');
         var boxes = document.querySelectorAll('.box');
         var collidables = document.querySelectorAll('.collidable');
         var coinSound = new Howl({
-          src: 'sounds/coin.mp3',
+          src: '../sounds/coin.mp3',
           html5: true
         });
         var biggerSound = new Howl({
-          src: 'sounds/bigger.mp3',
+          src: '../sounds/bigger.mp3',
           html5: true
         });
 

@@ -10,12 +10,12 @@
     <script src="https://aframe.io/releases/0.5.0/aframe.js"></script>
   </head>
   <body>
-    <a-scene vr-mode-ui="enabled: false">
+    <a-scene>
       <a-assets>
         <a-asset-item id="chihiro" src="chihiro.dae"></a-asset-item>
       </a-assets>
 
-      <a-collada-model src="#chihiro" position="0 0 -1">
+      <a-collada-model src="#chihiro" position="0 0 -0.6">
         <a-animation attribute="rotation" from="0 0 0" to="0 360 0" easing="linear" dur="10000" repeat="indefinite"></a-animation>
       </a-collada-model>
 

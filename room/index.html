@@ -31,9 +31,17 @@
         // door
         var $door = document.querySelector('#door');
         $door.addEventListener('click', function(){
-          if (!doorCanOpen) return;
+          if (!doorCanOpen) {
+            clicking = true;
+            showMessage('The door is locked.', function(){
+              showMessage();
+              clicking = false;
+            }, 2000);
+            return;
+          }
           if (doorOpend) return;
 
+          clicking = true;
           doorOpend = true;
           this.addEventListener('animationend', function(){
             showMessage('You have escaped!!', function(){

@@ -16,6 +16,7 @@
         var $systemMessageText = document.querySelector('#system-message-text');
         var showMessage = function(text, callback, delay){
           if (text === undefined) {
+            $systemMessageText.setAttribute('value', '');
             $systemMessage.setAttribute('visible', false);
             return;
           }

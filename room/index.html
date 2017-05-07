@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Escape</title>
+  <script src="https://aframe.io/releases/0.5.0/aframe.js"></script>
+  <script>
+    window.addEventListener('load', function(){
+      var $scene = document.querySelector('a-scene');
+      var clicking = false;
+      var doorOpend = false;
+      var doorCanOpen = false;
+
+      $scene.addEventListener('loaded', function(){
+        // system message
+        var $systemMessage = document.querySelector('#system-message');
+        var $systemMessageText = document.querySelector('#system-message-text');
+        var showMessage = function(text, callback, delay){
+          if (text === undefined) {
+            $systemMessage.setAttribute('visible', false);
+            return;
+          }
+          $systemMessageText.setAttribute('value', text);
+          $systemMessage.setAttribute('visible', true);
+          if (typeof callback === 'function') {
+            setTimeout(callback, delay || 3000);
+          }
+        };
+        showMessage();
+
+        // door
+        var $door = document.querySelector('#door');
+        $door.addEventListener('click', function(){
+          if (!doorCanOpen) return;
+          if (doorOpend) return;
+
+          doorOpend = true;
+          this.addEventListener('animationend', function(){
+            showMessage('You have escaped!!', function(){
+              showMessage();
+              clicking = false;
+            }, 2000);
+          });
+          $door.emit('open_door');
+        });
+
+        // chest
+        document.querySelector('#chest-slide-1').addEventListener('click', function(){
+          if (clicking) return;
+          clicking = true;
+          var self = this;
+          self.addEventListener('animationend', function(){
+            showMessage('The chest is empty.', function(){
+              showMessage();
+              clicking = false;
+              self.setAttribute('position', '0 0 0');
+            }, 2000);
+          });
+          self.emit('open-chest-slide');
+        });
+        document.querySelector('#chest-slide-2').addEventListener('click', function(){
+          if (clicking) return;
+          clicking = true;
+          var self = this;
+          self.addEventListener('animationend', function(){
+            showMessage('The chest is empty.', function(){
+              showMessage();
+              clicking = false;
+              self.setAttribute('position', '0 0 0');
+            }, 2000);
+          });
+          self.emit('open-chest-slide');
+        });
+        document.querySelector('#chest-slide-3').addEventListener('click', function(){
+          if (clicking) return;
+          clicking = true;
+          var self = this;
+          self.addEventListener('animationend', function(){
+            showMessage('You got a Key!', function(){
+              showMessage();
+              clicking = false;
+              doorCanOpen = true;
+              self.setAttribute('position', '0 0 0');
+            }, 2000);
+          });
+          self.emit('open-chest-slide');
+        });
+        document.querySelector('#chest-slide-4').addEventListener('click', function(){
+          if (clicking) return;
+          clicking = true;
+          var self = this;
+          self.addEventListener('animationend', function(){
+            showMessage('The chest is empty.', function(){
+              showMessage();
+              clicking = false;
+              self.setAttribute('position', '0 0 0');
+            }, 2000);
+          });
+          self.emit('open-chest-slide');
+        });
+
+        // clickables
+        var $clickables = document.querySelectorAll('.clickable');
+        $clickables.forEach(function(clickable){
+          clickable.addEventListener('mouseenter', function(){
+            if (clicking) return;
+            var material = clickable.getAttribute('material');
+            clickable.setAttribute('material', 'color: #ffff00');
+            clickable.addEventListener('mouseleave', function(){
+              clickable.setAttribute('material', material);
+            });
+          });
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+  <a-scene fog="type: linear; color: #000; far: 6;">
+    <!-- wall -->
+    <a-box side='back' width=3.9999 depth=3.9999 height=2.4 position="0 1.200 0"></a-box>
+
+    <!-- front -->
+    <a-entity>
+    </a-entity>
+
+    <!-- left -->
+    <a-entity rotation="0 90 0">
+      <a-box width=1.0 depth=0.45 height=1.5 position="1 0.75 -1.775" material="color: #705040">
+        <a-entity position="0 -0.5 0.005">
+          <a-box id="chest-slide-4" class="clickable" width=0.92 depth=0.45 height=0.3 position="0 0 0" material="color: #7f5f4f">
+            <a-animation attribute="position" to="0 0 0.405" dur="1000" begin="open-chest-slide"></a-animation>
+          </a-box>
+        </a-entity>
+        <a-entity position="0 -0.15 0.005">
+          <a-box id="chest-slide-3" class="clickable" width=0.92 depth=0.45 height=0.3 position="0 0 0" material="color: #7f5f4f">
+            <a-animation attribute="position" to="0 0 0.405" dur="1000" begin="open-chest-slide"></a-animation>
+          </a-box>
+        </a-entity>
+        <a-entity position="0 0.20 0.005">
+          <a-box id="chest-slide-2" class="clickable" width=0.92 depth=0.45 height=0.3 position="0 0 0" material="color: #7f5f4f">
+            <a-animation attribute="position" to="0 0 0.405" dur="1000" begin="open-chest-slide"></a-animation>
+          </a-box>
+        </a-entity>
+        <a-entity position="0 0.55 0.005">
+          <a-box id="chest-slide-1" class="clickable" width=0.92 depth=0.45 height=0.3 position="0 0 0" material="color: #7f5f4f">
+            <a-animation attribute="position" to="0 0 0.405" dur="1000" begin="open-chest-slide"></a-animation>
+          </a-box>
+        </a-entity>
+      </a-box>
+    </a-entity>
+
+    <!-- right -->
+    <a-entity rotation="0 -90 0">
+    </a-entity>
+
+    <!-- back -->
+    <a-entity rotation="0 180 0">
+      <a-entity id="door" position="0.43 1.0 -1.975">
+        <a-box class="clickable" width=0.86 height=2.0 depth=0.05 position="-0.43 0 0" material="color: #ff0000">
+          <a-sphere scale="0.05 0.05 0.025" position="-0.32 0 0.05"></a-sphere>
+        </a-box>
+        <a-animation attribute="rotation" to="0 90 0" dur="2000" begin="open_door"></a-animation>
+      </a-entity>
+    </a-entity>
+
+    <!-- other -->
+    <a-entity light="type: ambient; color: #ddd"></a-entity>
+    <a-entity light="type: directional; color: #FFF; intensity: 0.2" position="0 2.3 0"></a-entity>
+
+    <a-camera wasd-controls="enabled: false">
+      <a-plane id="system-message" width=0.6 height=0.2 opacity=0.8 position="0 0 -0.5" material="shader: flat; color: #000;">
+        <a-text id="system-message-text" value="hoge" rotation="0 0 0" align="center" width="1"></a-text>
+      </a-plane>
+      <a-cursor fuse=true fuse-timeout=500>
+      </a-cursor>
+    </a-camera>
+  </a-scene>
+</body>
+</html>

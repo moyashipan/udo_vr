@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>多重Sky</title>
+  <script src="https://aframe.io/releases/0.6.0/aframe.js"></script>
+  <script>
+    window.addEventListener('load', function(){
+      var $scene = document.querySelector('a-scene');
+
+      $scene.addEventListener('loaded', function(){
+      });
+    });
+  </script>
+</head>
+<body>
+  <a-scene>
+    <a-assets>
+      <img id="sky0" src="sky0.jpg">
+      <img id="sky1" src="sky1.png">
+      <img id="sky2" src="sky2.png">
+    </a-assets>
+
+    <a-sphere src="#sky0" transparent=false radius=10000 side="double"></a-sphere>
+    <a-sphere src="#sky1" transparent=true radius=10 side="double"></a-sphere>
+    <a-sphere src="#sky2" transparent=true radius=2 side="double"></a-sphere>
+
+    <a-camera user-height=0 fov=120>
+      <a-cursor></a-cursor>
+    </a-camera>
+  </a-scene>
+</body>
+</html>

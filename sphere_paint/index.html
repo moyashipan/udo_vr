@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Sphereに点置くやつ</title>
+  <style>
+    * {
+      -webkit-tap-highlight-color: rgba(0,0,0,0);
+    }
+  </style>
+  <script src="https://aframe.io/releases/0.6.0/aframe.js"></script>
+  <script>
+    window.addEventListener('load', function(){
+      var $scene = document.querySelector('a-scene');
+      var $sky = document.querySelector('a-sphere.sky');
+      var template = document.querySelector('#sphere-template');
+      var lastPosition = null;
+
+      $sky.addEventListener('raycaster-intersected', function(e){
+        lastPosition = e.detail.intersection.point;
+      });
+      $sky.addEventListener('raycaster-intersected-cleared', function(e){
+        //console.log(e);
+      });
+      function addSphereStroke(position){
+        console.log(position);
+        var el = document.importNode(template.content, true);
+        el.querySelector('.sphere-stroke').setAttribute('position', [position.x, position.y, position.z].join(' '));
+
+        $scene.appendChild(el);
+      }
+      var checkClickTarget = function(){
+        addSphereStroke(lastPosition);
+      };
+      var eventName = AFRAME.utils.device.isMobile() ? 'touchend' : 'click';
+      //var eventName = 'click';
+      window.addEventListener(eventName, function(){
+        checkClickTarget();
+      });
+    });
+  </script>
+</head>
+<body>
+  <template id="sphere-template">
+    <a-sphere class="sphere-stroke" radius=20 material="shader: flat; color: #000000">
+    </a-sphere>
+  </template>
+
+  <a-scene>
+    <a-sphere radius=1000 side="double" class="sky collidable" wireframe=true material="shader: flat; color: #c0c0c0"></a-sphere>
+
+    <a-camera user-height=0 raycaster="objects: .collidable">
+      <a-circle position="0 0 -950" scale="5 5 0" color="#ff0000"></a-circle>
+    </a-camera>
+  </a-scene>
+</body>
+</html>

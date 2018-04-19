@@ -8,6 +8,8 @@
     }
   </style>
   <script src="../javascripts/aframe.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.5/lodash.min.js"></script>
   <script>
     window.addEventListener('load', function(){
       var $scene = document.querySelector('a-scene');
@@ -18,9 +20,10 @@
       var woman0Template = document.querySelector('#woman0-template');
       var cameraRotation = { x: 0, y: 0, z: 0 };
 
-      function addShop(position){
+      function addShop(position, item){
         var el = document.importNode(template.content, true);
         el.querySelector('.shop').setAttribute('position', [position.x, position.y, position.z].join(' '));
+        el.querySelector('.item-image').setAttribute('src', "./images/" + item.id + ".jpg");
 
         $scene.appendChild(el);
       }
@@ -32,17 +35,21 @@
 
         $scene.appendChild(el);
       };
-      // Shop追加
-      for (var i = 0; i < 10; i++) {
-        for (var j = 0; j < 20; j++) {
-          addShop({ x: i * 3 , y: 0.35, z: -j * 1.0 });
-          addShop({ x: i * 3 + 0.7, y: 0.35, z: -j * 1.0 });
+      $.getJSON('./items.json').done(function(items){
+        var itemsLength = items.length;
+
+        // Shop追加
+        for (var i = 0; i < 10; i++) {
+          for (var j = 0; j < 20; j++) {
+            addShop({ x: i * 3 , y: 0.35, z: -j * 1.0 }, items[Math.floor(Math.random() * itemsLength)]);
+            addShop({ x: i * 3 + 0.7, y: 0.35, z: -j * 1.0 }, items[Math.floor(Math.random() * itemsLength)]);
+          }
         }
-      }
-      // Human追加
-      for (var i = 0; i < 100; i++) {
-        addHuman();
-      }
+        // Human追加
+        for (var i = 0; i < 100; i++) {
+          addHuman();
+        }
+      });
 
       var draw = function(){
         var rotation = $camera.getAttribute('rotation');
@@ -80,7 +87,10 @@
 </head>
 <body>
   <template id="shop-template">
-    <a-box color="#808080" class="shop" width="0.6" height="0.7" depth="0.9"></a-box>
+    <a-entity class="shop">
+      <a-box color="#808080" width="0.6" height="0.7" depth="0.9"></a-box>
+      <a-box class="item-image" src="man0.png" width="0.5" height="0.5" depth="0.5" position="0 0.5 0"></a-box>
+    </a-entity>
   </template>
   <template id="man0-template">
     <a-entity>

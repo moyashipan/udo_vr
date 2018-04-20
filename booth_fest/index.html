@@ -31,7 +31,7 @@
         var humanTemplates = [man0Template, woman0Template];
         var template = humanTemplates[Math.floor(Math.random() * 2)];
         var el = document.importNode(template.content, true);
-        el.querySelector('a-entity').setAttribute('position', [Math.random() * 30, 0, Math.random() * -20].join(' '));
+        el.querySelector('a-entity').setAttribute('position', [Math.random() * 30, 0, Math.random() * -10].join(' '));
 
         $scene.appendChild(el);
       };
@@ -40,13 +40,13 @@
 
         // Shop追加
         for (var i = 0; i < 10; i++) {
-          for (var j = 0; j < 20; j++) {
+          for (var j = 0; j < 10; j++) {
             addShop({ x: i * 3 , y: 0.35, z: -j * 1.0 }, items[Math.floor(Math.random() * itemsLength)]);
             addShop({ x: i * 3 + 0.7, y: 0.35, z: -j * 1.0 }, items[Math.floor(Math.random() * itemsLength)]);
           }
         }
         // Human追加
-        for (var i = 0; i < 100; i++) {
+        for (var i = 0; i < 50; i++) {
           addHuman();
         }
       });

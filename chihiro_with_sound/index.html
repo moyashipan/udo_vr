@@ -21,6 +21,7 @@
         }, _handleSuccess, _handleError);
         
         function _handleSuccess(evt) {
+          alert('右下のメガネアイコンをタップしてから、声を出してみてください');
           $scene.addEventListener("enter-vr", () => {
             _handleClick(evt);
           }, false);
@@ -57,7 +58,7 @@
               sum += data[i];
             }
             let ave = sum / LENGTH;
-            if (ave < 128) {
+            if (ave < 96) {
               ave = 0;
             }
             // 加速させる

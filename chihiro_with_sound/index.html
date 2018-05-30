@@ -56,7 +56,10 @@
             for (i = 0; i < LENGTH; ++i) {
               sum += data[i];
             }
-            const ave = sum / LENGTH;
+            let ave = sum / LENGTH;
+            if (ave < 48) {
+              ave = 0;
+            }
             // 加速させる
             aRotateY = ave * 0.01;
             vRotateY += aRotateY;
